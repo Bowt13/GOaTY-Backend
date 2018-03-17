@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import {Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable} from 'typeorm'
 import { BaseEntity } from 'typeorm/repository/BaseEntity'
 import { IsString, MinLength, IsEmail } from 'class-validator'
 import { Exclude } from 'class-transformer'
 import * as bcrypt from 'bcrypt'
+import Game from "../games/entity";
 
 @Entity()
 export default class User extends BaseEntity {
@@ -24,6 +25,10 @@ export default class User extends BaseEntity {
   @Column('text', {nullable:false})
   @Exclude({toPlainOnly:true})
   password: string
+
+  @ManyToMany(type => Game)
+  @JoinTable()
+  games: Game[]
 
   async setPassword(rawPassword: string) {
     this.password = await bcrypt.hash(rawPassword, 10)
